@@ -56,7 +56,7 @@ function getItemsFromStorage (){
   let itemsFromStorage;
 
   if (localStorage.getItem("items") === null) {
-    let itemsFromStorage = [];
+    itemsFromStorage = [];
   } else {
     itemsFromStorage = JSON.parse(localStorage.getItem("items"));
   }
@@ -66,12 +66,21 @@ function getItemsFromStorage (){
 function onClickItem(e) {
   if (e.target.classList.contains("bi-x")) {
     e.target.parentElement.remove();
+    removeItemFromStoreage(e.target.parentElement.textContent)
     checkUI();
   }
 }
 
+function removeItemFromStoreage(item) {
+   let itemsFromStorage = getItemsFromStorage ()
+
+   itemsFromStorage = itemsFromStorage.filter((i) => i !== item) 
+     localStorage.setItem('items' , JSON.stringify(itemsFromStorage))
+}
+
 function onClickClear() {
   itemList.innerHTML = "";
+  localStorage.removeItem('items');
   checkUI();
 }
 
