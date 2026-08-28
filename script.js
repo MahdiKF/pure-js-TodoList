@@ -5,6 +5,17 @@ const itemList = document.getElementById("item-list");
 const clearBtn = document.getElementById("items-clear");
 const itemFilter = document.getElementById("filter");
 
+
+
+function displayItems(){
+
+   let itemsFromStorage = getItemsFromStorage ()
+
+  itemsFromStorage.forEach(item => {
+    addItemToDOM(item);
+  })
+  checkUI();
+}
 function addItem(e) {
   e.preventDefault();
   const newItem = itemInput.value;
@@ -35,6 +46,13 @@ function addItemToDOM(item) {
 }
 
 function addItemToStorage(item) {
+  let itemsFromStorage = getItemsFromStorage ()
+  itemsFromStorage.push(item);
+  localStorage.setItem("items", JSON.stringify(itemsFromStorage));
+}
+
+function getItemsFromStorage (){
+
   let itemsFromStorage;
 
   if (localStorage.getItem("items") === null) {
@@ -42,8 +60,7 @@ function addItemToStorage(item) {
   } else {
     itemsFromStorage = JSON.parse(localStorage.getItem("items"));
   }
-  itemsFromStorage.push(item);
-  localStorage.setItem("items", JSON.stringify(itemsFromStorage));
+  return itemsFromStorage
 }
 
 function onClickItem(e) {
@@ -89,5 +106,6 @@ itemForm.addEventListener("submit", addItem);
 itemList.addEventListener("click", onClickItem);
 clearBtn.addEventListener("click", onClickClear);
 itemFilter.addEventListener("input", filterItems);
+ document.addEventListener('DOMContentLoaded', displayItems)
 
 checkUI();
