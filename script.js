@@ -13,20 +13,37 @@ function addItem(e) {
     return;
   } else {
     inputInvalid.innerText = "";
-    checkUI();
   }
+  addItemToDOM(newItem);
 
+  addItemToStorage(newItem);
+
+  itemInput.value = "";
+  checkUI();
+}
+
+function addItemToDOM(item) {
   const li = document.createElement("li");
   li.className = "list-item";
-  li.textContent = newItem;
+  li.textContent = item;
 
   const icon = document.createElement("i");
   icon.className = "bi bi-x fs-5 text-danger";
 
   li.appendChild(icon);
   itemList.appendChild(li);
+}
 
-  itemInput.value = "";
+function addItemToStorage(item) {
+  let itemsFromStorage;
+
+  if (localStorage.getItem("items") === null) {
+    let itemsFromStorage = [];
+  } else {
+    itemsFromStorage = JSON.parse(localStorage.getItem("items"));
+  }
+  itemsFromStorage.push(item);
+  localStorage.setItem("items", JSON.stringify(itemsFromStorage));
 }
 
 function onClickItem(e) {
@@ -47,25 +64,24 @@ function checkUI() {
   if (items.length === 0) {
     clearBtn.style.display = "none";
     itemFilter.style.display = "none";
-  }else {
+  } else {
     clearBtn.style.display = "block";
     itemFilter.style.display = "block";
   }
 }
 
-function  filterItems (e){
-  const items = itemList.querySelectorAll('li')      
-  const text = e.target.value.toLowerCase()
-  items.forEach((item)=>{
-    const itemName = item.firstChild.textContent.toLowerCase( )
-  
-    if(itemName.indexOf(text) !== -1){
-         item.style.display='flex';
-    }else{
-      item.style.display='none';
+function filterItems(e) {
+  const items = itemList.querySelectorAll("li");
+  const text = e.target.value.toLowerCase();
+  items.forEach((item) => {
+    const itemName = item.firstChild.textContent.toLowerCase();
+
+    if (itemName.indexOf(text) !== -1) {
+      item.style.display = "flex";
+    } else {
+      item.style.display = "none";
     }
-     
-  })
+  });
 }
 // Event Listener
 
@@ -73,6 +89,5 @@ itemForm.addEventListener("submit", addItem);
 itemList.addEventListener("click", onClickItem);
 clearBtn.addEventListener("click", onClickClear);
 itemFilter.addEventListener("input", filterItems);
-
 
 checkUI();
