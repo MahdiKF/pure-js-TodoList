@@ -4,16 +4,14 @@ const inputInvalid = document.getElementById("input-invalid");
 const itemList = document.getElementById("item-list");
 const clearBtn = document.getElementById("items-clear");
 const itemFilter = document.getElementById("filter");
+const formBtn = itemForm.querySelector('button')
 
+function displayItems() {
+  let itemsFromStorage = getItemsFromStorage();
 
-
-function displayItems(){
-
-   let itemsFromStorage = getItemsFromStorage ()
-
-  itemsFromStorage.forEach(item => {
+  itemsFromStorage.forEach((item) => {
     addItemToDOM(item);
-  })
+  });
   checkUI();
 }
 function addItem(e) {
@@ -46,13 +44,12 @@ function addItemToDOM(item) {
 }
 
 function addItemToStorage(item) {
-  let itemsFromStorage = getItemsFromStorage ()
+  let itemsFromStorage = getItemsFromStorage();
   itemsFromStorage.push(item);
   localStorage.setItem("items", JSON.stringify(itemsFromStorage));
 }
 
-function getItemsFromStorage (){
-
+function getItemsFromStorage() {
   let itemsFromStorage;
 
   if (localStorage.getItem("items") === null) {
@@ -60,27 +57,43 @@ function getItemsFromStorage (){
   } else {
     itemsFromStorage = JSON.parse(localStorage.getItem("items"));
   }
-  return itemsFromStorage
+  return itemsFromStorage;
 }
 
 function onClickItem(e) {
   if (e.target.classList.contains("bi-x")) {
-    e.target.parentElement.remove();
-    removeItemFromStoreage(e.target.parentElement.textContent)
-    checkUI();
+    removeItem(e.target.parentElement);
+  }else {
+    setItemToEdite(e.target)
+     
   }
 }
 
 function removeItemFromStoreage(item) {
-   let itemsFromStorage = getItemsFromStorage ()
+  let itemsFromStorage = getItemsFromStorage();
 
-   itemsFromStorage = itemsFromStorage.filter((i) => i !== item) 
-     localStorage.setItem('items' , JSON.stringify(itemsFromStorage))
+  itemsFromStorage = itemsFromStorage.filter((i) => i !== item);
+  localStorage.setItem("items", JSON.stringify(itemsFromStorage));
+}
+
+function removeItem(item){
+  item.remove();
+    removeItemFromStoreage(item.textContent);
+    checkUI();
+}
+
+function setItemToEdite(item){
+   itemList.querySelectorAll('li').forEach(item => item.classList.remove('edit-mode'))
+   item.classList.add('edit-mode')
+    itemInput.value= item.textContent;
+
+    formBtn.innerHTML = "<i class='bi bi-pencil-fill'></i>  Update Item"
+    formBtn.classList.replace('btn-dark' , 'btn-primary')
 }
 
 function onClickClear() {
   itemList.innerHTML = "";
-  localStorage.removeItem('items');
+  localStorage.removeItem("items");
   checkUI();
 }
 
@@ -115,6 +128,6 @@ itemForm.addEventListener("submit", addItem);
 itemList.addEventListener("click", onClickItem);
 clearBtn.addEventListener("click", onClickClear);
 itemFilter.addEventListener("input", filterItems);
- document.addEventListener('DOMContentLoaded', displayItems)
+document.addEventListener("DOMContentLoaded", displayItems);
 
 checkUI();
