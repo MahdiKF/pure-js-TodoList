@@ -4,7 +4,8 @@ const inputInvalid = document.getElementById("input-invalid");
 const itemList = document.getElementById("item-list");
 const clearBtn = document.getElementById("items-clear");
 const itemFilter = document.getElementById("filter");
-const formBtn = itemForm.querySelector('button')
+const formBtn = itemForm.querySelector('button');
+let isEditMode = false;
 
 function displayItems() {
   let itemsFromStorage = getItemsFromStorage();
@@ -23,12 +24,34 @@ function addItem(e) {
   } else {
     inputInvalid.innerText = "";
   }
+
+  if(isEditMode){
+    const itemToEdit = itemList.querySelector('.edit-mode');
+    removeItemFromStoreage(itemToEdit.textContent);
+    itemToEdit.remove();
+    formBtn.innerHTML = "<i class='bi bi-plus'></i>  Add Item"
+    formBtn.classList.replace('btn-primary' ,'btn-dark' )
+    isEditMode = false;
+
+  }else{
+    if(checkIfItemExists(newItem)){
+      inputInvalid.innerText = "That item already exists!"
+      return;
+    }{
+      inputInvalid.innerText= '';
+    }
+  }
   addItemToDOM(newItem);
 
   addItemToStorage(newItem);
 
   itemInput.value = "";
   checkUI();
+}
+
+function checkIfItemExists(item) {
+  const itemsFromStorage = getItemsFromStorage();
+    return itemsFromStorage.includes(item)
 }
 
 function addItemToDOM(item) {
@@ -83,6 +106,7 @@ function removeItem(item){
 }
 
 function setItemToEdite(item){
+  isEditMode = true
    itemList.querySelectorAll('li').forEach(item => item.classList.remove('edit-mode'))
    item.classList.add('edit-mode')
     itemInput.value= item.textContent;
